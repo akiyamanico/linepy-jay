@@ -1,6 +1,6 @@
 def disable_grouplink(line, chat_id):
     try:
-        group = line.getChats(chat_id)  # Get the group chat details
+        group = line.getChats(chat_id)  
         print(group) 
         
         if group:
@@ -9,7 +9,7 @@ def disable_grouplink(line, chat_id):
                 if group.preventedJoinByTicket:
                     line.sendMessage(chat_id, "Group link is already off.")
                 else:
-                    group.preventedJoinByTicket = True  # Set to True to prevent joining by link
+                    group.preventedJoinByTicket = True  
                     line.updateGroup(group)
                     print("Updating group to disable join by link...") 
                     line.sendMessage(chat_id, "Group link is now disabled.")

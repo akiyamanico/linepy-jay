@@ -4,16 +4,18 @@ from commands import hello, kick, kickall, grouplink_on, grouplink_off, quiz
 from social_tools.instagramMediaDownloader import handle_instagram_links
 from dotenv import load_dotenv
 import os
+from commands.ai import generate_image
+
+# Load environment variables
+load_dotenv()
 
 print("Attempting to log in...")
-
-load_dotenv()
 
 line_email = os.getenv("LINE_EMAIL")
 line_password = os.getenv("LINE_PASSWORD")
 app_name = os.getenv("LINE_APP_NAME")
 
-print(line_email,  line_password  , app_name)
+print(line_email, line_password, app_name)
 line = LINE(line_email, line_password, appName=app_name)
 line.server.E2EE_enable = True
 
@@ -55,12 +57,20 @@ def message_handler(op):
     elif quiz.current_quiz is not None:
         quiz.check_answer(line, text)
     
+    elif text.startswith("generate image "):
+        prompt = text.replace("generate image ", "", 1).strip()
+        image_url = generate_image(prompt)
+        print(image_url)
+        if image_url:
+            line.sendMessage(chat_id, image_url) 
+        else:
+            line.sendMessage(chat_id, "Not enough credit.")
+
     handle_instagram_links(line, chat_id, text)  
 
 def main():
     oepoll = OEPoll(line)
     print("Secure bot is running with E2EE and Letter Sealing...")
-
 
     while True:
         try:    
