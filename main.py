@@ -6,10 +6,13 @@ from dotenv import load_dotenv
 import os
 
 print("Attempting to log in...")
+
 load_dotenv()
+
 line_email = os.getenv("LINE_EMAIL")
 line_password = os.getenv("LINE_PASSWORD")
 app_name = os.getenv("LINE_APP_NAME")
+
 print(line_email,  line_password  , app_name)
 line = LINE(line_email, line_password, appName=app_name)
 
@@ -58,6 +61,7 @@ def message_handler(op):
 def main():
     oepoll = OEPoll(line)
     print("Secure bot is running with E2EE and Letter Sealing...")
+    print(dir(line))
 
     while True:
         try:

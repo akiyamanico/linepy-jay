@@ -321,15 +321,6 @@ class Talk(object):
             'STKPKGID' if productType == 'sticker' else 'PRDID': productId
         }
         return self.sendMessage(to, '', contentMetadata, 9)
-    
-    @loggedIn
-    def kickoutFromGroup(self, groupId, midlist):
-        split_appname = self.appName.split("\t")
-        app_name, app_ver = split_appname[0], split_appname[1]
-        if app_name in ["DEPRECATED"]:
-            return self.talk.kickoutFromGroup(0, groupId, midlist)
-        else:
-            return self.talk.deleteOtherFromChat(DeleteOtherFromChatRequest(0,groupId,midlist))
 
     @loggedIn
     def sendMessageAwaitCommit(self, to, text, contentMetadata={}, contentType=0):
@@ -632,6 +623,49 @@ class Talk(object):
     @loggedIn
     def getChatV2(self, groupId):
         return self.talk.getChats(GetChatsRequest([groupId], True, True)).chat[0]
+    
+    @loggedIn
+    def inviteIntoGroup(self, groupId, midlist):
+        split_appname = self.appName.split("\t")
+        app_name, app_ver = split_appname[0], split_appname[1]
+        if app_name in ["DEPRECATED"]:
+            return self.talk.inviteIntoGroup(0, groupId, midlist)
+        else:
+            return self.talk.inviteIntoChat(InviteIntoChatRequest(0,groupId,midlist))
+        
+    @loggedIn
+    def leaveGroup(self, groupId):
+        split_appname = self.appName.split("\t")
+        app_name, app_ver = split_appname[0], split_appname[1]
+        if app_name in ["DEPRECATED"]:
+            return self.talk.leaveGroup(0, groupId)
+        else:
+            req = DeleteSelfFromChatRequest()
+            req.reqSeq = 0
+            req.chatMid = groupId
+            return self.talk.deleteSelfFromChat(req)
+
+    @loggedIn
+    def reissueGroupTicket(self, groupId):
+        split_appname = self.appName.split("\t")
+        app_name, app_ver = split_appname[0], split_appname[1]
+        if app_name in ["DEPRECATED"]:
+            return self.talk.reissueGroupTicket(groupId)
+        else:
+            return self.talk.reissueChatTicket(ReissueChatTicketRequest(0,groupId)).ticketId
+        
+    @loggedIn
+    def updateGroupPreferenceAttribute(self, groupMid, updatedAttrs):
+        return self.talk.updateGroupPreferenceAttribute(0, groupMid, updatedAttrs)
+    
+    @loggedIn
+    def kickoutFromGroup(self, groupId, midlist):
+        split_appname = self.appName.split("\t")
+        app_name, app_ver = split_appname[0], split_appname[1]
+        if app_name in ["DEPRECATED"]:
+            return self.talk.kickoutFromGroup(0, groupId, midlist)
+        else:
+            return self.talk.deleteOtherFromChat(DeleteOtherFromChatRequest(0,groupId,midlist))
         
     @loggedIn
     def rejectChatInvitation(self,chatMid):
