@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 import os
 
 print("Attempting to log in...")
-
-line_email = os.getenv('LINE_EMAIL')
-line_password = os.getenv('LINE_PASSWORD')
-app_name = os.getenv('LINE_APP_NAME')
-
+load_dotenv()
+line_email = os.getenv("LINE_EMAIL")
+line_password = os.getenv("LINE_PASSWORD")
+app_name = os.getenv("LINE_APP_NAME")
+print(line_email,  line_password  , app_name)
 line = LINE(line_email, line_password, appName=app_name)
 
 line.server.E2EE_enable = True

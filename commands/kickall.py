@@ -1,4 +1,3 @@
-# commands/kickall.py
 def kick_all_members(line, chat_id):
     try:
         group = line.getGroup(chat_id)

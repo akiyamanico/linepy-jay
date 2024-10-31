@@ -10,13 +10,10 @@ def kick_member(line, msg, text):
                 member_mid = mentionees[0]['M']  
                 if hasattr(line, 'kickoutFromGroup'):
                     line.kickoutFromGroup(msg.to, [member_mid])
-                    print("tertendang")
                 else:
                     line.sendMessage(msg.to, "udah di ganti commandnya berarti lol -bot")
-                    print("lololol")
             else:
                 line.sendMessage(msg.to, "Bener ga?")
-                print("error")
         else:
             line.sendMessage(msg.to, "Mention dulu")
     except Exception as e:

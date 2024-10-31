@@ -1,4 +1,3 @@
-# commands/grouplink_on.py
 def enable_grouplink(line, chat_id):
     try:
         group = line.getGroup(chat_id)
