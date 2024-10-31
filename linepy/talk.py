@@ -666,7 +666,35 @@ class Talk(object):
             return self.talk.kickoutFromGroup(0, groupId, midlist)
         else:
             return self.talk.deleteOtherFromChat(DeleteOtherFromChatRequest(0,groupId,midlist))
-        
+
+    @loggedIn
+    def getGroup(self, groupId):
+        group_data = {"class":""}
+        split_appname = self.appName.split("\t")
+        app_name, app_ver = split_appname[0], split_appname[1]
+        if app_name in ["DEPRECATED"]:
+            G = self.talk.getCompactGroup(groupId)
+            pending = G.invitee
+            if pending != None:
+                pending = [{"mid":x.mid} for x in G.invitee]
+            group_data.update({
+                "class":G,
+                "id": G.id,
+                "createdTime":G.createdTime,
+                "name": G.name,
+                "pictureStatus": G.pictureStatus,
+                "preventedJoinByTicket": G.preventedJoinByTicket,
+                "groupPreference": {"invitationTicket": G.groupPreference.invitationTicket},
+                "creator": {"mid":G.creator.mid},
+                "members": [{"mid":x.mid} for x in G.members],
+                "invitee": pending
+            })
+            
+    @loggedIn
+    def getChats(self, chatMids=[], withMembers=True, withInvitees=True):
+        return self.talk.getChats(GetChatsRequest(chatMids,withMembers,withInvitees))
+
+
     @loggedIn
     def rejectChatInvitation(self,chatMid):
         req = RejectChatInvitationRequest()

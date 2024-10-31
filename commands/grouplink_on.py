@@ -1,16 +1,21 @@
 def enable_grouplink(line, chat_id):
     try:
-        group = line.getGroup(chat_id)
-        print(group)
+        group = line.getChat(chat_id)  
+        print(group) 
         
         if group:
-            print(f"preventedJoinByTicket: {group.preventedJoinByTicket}")
-            if not group.preventedJoinByTicket:
-                line.sendMessage(chat_id, "Group link is already on.")
+            if hasattr(group, 'preventedJoinByTicket'):
+                print(f"preventedJoinByTicket: {group.preventedJoinByTicket}")
+                if not group.preventedJoinByTicket:
+                    line.sendMessage(chat_id, "Group link is already on.")
+                else:
+                    group.preventedJoinByTicket = False
+                    line.updateGroup(group)
+                    print("Updating group to enable join by link...") 
+                    line.sendMessage(chat_id, "Group link is now enabled.")
             else:
-                group.preventedJoinByTicket = False
-                line.updateGroup(group)
-                print("Updating group to enable join by link...") 
-                line.sendMessage(chat_id, "Group link is now enabled.")
+                line.sendMessage(chat_id, "This group does not support enabling the group link.")
+        else:
+            print("No group found for the provided chat_id.")
     except Exception as e:
         print(f"Error enabling group link: {e}")  # Logging the exception
