@@ -15,7 +15,6 @@ app_name = os.getenv("LINE_APP_NAME")
 
 print(line_email,  line_password  , app_name)
 line = LINE(line_email, line_password, appName=app_name)
-
 line.server.E2EE_enable = True
 
 line.log('Auth Token: ' + str(line.authToken))
@@ -41,11 +40,11 @@ def message_handler(op):
     elif text == "kickall":
         kickall.kick_all_members(line, chat_id)
     
-    # elif text == "grouplink on":
-    #     grouplink_on.enable_grouplink(line, chat_id)
-    
-    # elif text == "grouplink off":
-    #     grouplink_off.disable_grouplink(line, chat_id)
+    elif text == "grouplink on":
+        grouplink_on.enable_grouplink(line, chat_id)
+
+    elif text == "grouplink off":
+        grouplink_off.disable_grouplink(line, chat_id)
         
     elif text == "start quiz":
         quiz.start_quiz(line, chat_id)
@@ -61,6 +60,7 @@ def message_handler(op):
 def main():
     oepoll = OEPoll(line)
     print("Secure bot is running with E2EE and Letter Sealing...")
+
 
     while True:
         try:    

@@ -1,6 +1,6 @@
 def enable_grouplink(line, chat_id):
     try:
-        group = line.getChat(chat_id)  
+        group = line.getChats(chat_id)  
         print(group) 
         
         if group:
@@ -18,4 +18,4 @@ def enable_grouplink(line, chat_id):
         else:
             print("No group found for the provided chat_id.")
     except Exception as e:
-        print(f"Error enabling group link: {e}")  # Logging the exception
+        print(f"Error enabling group link: {e}")  
