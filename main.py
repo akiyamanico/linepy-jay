@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import os
 from commands.ai import generate_image
 
-# Load environment variables
 load_dotenv()
 
 print("Attempting to log in...")
