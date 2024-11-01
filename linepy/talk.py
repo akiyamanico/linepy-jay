@@ -591,11 +591,8 @@ class Talk(object):
         return self.talk.findChatByTicket(req)
 
     @loggedIn
-    def getAllChatMids(self):
-        req = GetAllChatMidsRequest()
-        req.withMembersChats = True
-        req.withInvitedChats = True
-        return self.talk.getAllChatMids(req,1)
+    def getAllChatMids(self, withMemberChats=True, withInvitedChats=True):
+        return self.talk.getAllChatMids(GetAllChatMidsRequest(withMemberChats,withInvitedChats), 0)
 
     @loggedIn
     def inviteIntoChat(self,chatMid,targets={}):
@@ -604,6 +601,7 @@ class Talk(object):
         req.chatMid = chatMid
         req.targetUserMids = targets
         return self.talk.inviteIntoChat(req)
+
 
     @loggedIn
     def reissueChatTicket(self,chatMid):
@@ -666,6 +664,36 @@ class Talk(object):
             return self.talk.kickoutFromGroup(0, groupId, midlist)
         else:
             return self.talk.deleteOtherFromChat(DeleteOtherFromChatRequest(0,groupId,midlist))
+        
+    @loggedIn
+    def getGroupIdsByName(self, groupName):
+        gIds = []
+        for gId in self.getGroupIdsJoined():
+            g = self.getCompactGroup(gId)
+            if groupName in g.name:
+                gIds.append(gId)
+        return gIds
+
+    @loggedIn
+    def getGroupIdsInvited(self):
+        split_appname = self.appName.split("\t")
+        app_name, app_ver = split_appname[0], split_appname[1]
+        if app_name in ["DEPRECATED"]:
+            print("DEPRECATED")
+            return self.talk.getGroupIdsInvited()
+        else:
+            print("done")
+            return list(self.getAllChatMids().invitedChatMids)
+
+    @loggedIn
+    def getGroupIdsJoined(self):
+        split_appname = self.appName.split("\t")
+        app_name, app_ver = split_appname[0], split_appname[1]
+        if app_name in ["DEPRECATED"]:
+            print("DEPRECATED")
+            return self.talk.getGroupIdsJoined()
+        else:
+            return list(self.getAllChatMids().memberChatMids)
 
     @loggedIn
     def getGroup(self, groupId):
@@ -689,11 +717,15 @@ class Talk(object):
                 "members": [{"mid":x.mid} for x in G.members],
                 "invitee": pending
             })
+            print(group_data)
             
     @loggedIn
     def getChats(self, chatMids=[], withMembers=True, withInvitees=True):
         return self.talk.getChats(GetChatsRequest(chatMids,withMembers,withInvitees))
 
+    @loggedIn
+    def getRecentMessagesV2(self, messageBoxId, messagesCount):
+        return self.talk.getRecentMessagesV2(messageBoxId, messagesCount)
 
     @loggedIn
     def rejectChatInvitation(self,chatMid):

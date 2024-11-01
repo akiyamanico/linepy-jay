@@ -3,8 +3,11 @@ import time
 from commands import hello, kick, kickall, grouplink_on, grouplink_off, quiz
 from social_tools.instagramMediaDownloader import handle_instagram_links
 from dotenv import load_dotenv
+from commands.response_time import test_response_time
 import os
 from commands.ai import generate_image
+from commands.group_commands import *
+
 
 load_dotenv()
 
@@ -20,13 +23,18 @@ line.server.E2EE_enable = True
 
 line.log('Auth Token: ' + str(line.authToken))
 print("Login successful with E2EE and Letter Sealing enabled!")
+broadcast_group_id = None
+
 
 def message_handler(op):
+    global broadcast_group_id
     msg = op.message
     text = msg.text
     
     if text is None:
         return
+    
+    message_id = msg.id
     
     text = text.lower()
 
@@ -64,6 +72,19 @@ def message_handler(op):
             line.sendMessage(chat_id, image_url) 
         else:
             line.sendMessage(chat_id, "Not enough credit.")
+            
+    elif text == "test response":
+        test_response_time(line, chat_id)
+
+    elif text == "set this groupbroadcast":
+        set_group_broadcast(line, chat_id)
+
+    elif text.startswith("broadcast message "):
+        broadcast_message_text = text.replace("broadcast message ", "", 1).strip()
+        broadcast_message(line, broadcast_message_text)
+
+    elif text == "list sider":
+        get_siders(line, chat_id, message_id)
 
     handle_instagram_links(line, chat_id, text)  
 
