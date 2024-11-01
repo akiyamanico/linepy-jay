@@ -25,7 +25,7 @@ def broadcast_message(line, message):
 
 
 #basically get_siders required a client which supported to get lastReadMessage
-#because we are using windows as a client in thrift so this line is very useless
+#because we are using windows as a client in thrift so these lines of get_siders is very useless
 def get_siders(line, chat_id):
     try:
         last_read_message_id = line.getLastReadMessageIds(chat_id)
