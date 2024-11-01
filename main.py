@@ -17,7 +17,6 @@ line_email = os.getenv("LINE_EMAIL")
 line_password = os.getenv("LINE_PASSWORD")
 app_name = os.getenv("LINE_APP_NAME")
 
-print(line_email, line_password, app_name)
 line = LINE(line_email, line_password, appName=app_name)
 line.server.E2EE_enable = True
 
@@ -33,8 +32,6 @@ def message_handler(op):
     
     if text is None:
         return
-    
-    message_id = msg.id
     
     text = text.lower()
 
@@ -84,7 +81,8 @@ def message_handler(op):
         broadcast_message(line, broadcast_message_text)
 
     elif text == "list sider":
-        get_siders(line, chat_id, message_id)
+        get_siders(line, chat_id)
+        print(get_siders)
 
     handle_instagram_links(line, chat_id, text)  
 

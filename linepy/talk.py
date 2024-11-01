@@ -371,10 +371,6 @@ class Talk(object):
         return self.talk.sendEvent(0, messageObject)
 
     @loggedIn
-    def getLastReadMessageIds(self, chatId):
-        return self.talk.getLastReadMessageIds(0, chatId)
-
-    @loggedIn
     def getPreviousMessagesV2WithReadCount(self, messageBoxId, endMessageId, messagesCount=50):
         return self.talk.getPreviousMessagesV2WithReadCount(messageBoxId, endMessageId, messagesCount)
 
@@ -718,7 +714,11 @@ class Talk(object):
                 "invitee": pending
             })
             print(group_data)
-            
+
+    @loggedIn
+    def getLastReadMessageIds(self, chatId):
+        return self.talk.getLastReadMessageIds(0, chatId)
+
     @loggedIn
     def getChats(self, chatMids=[], withMembers=True, withInvitees=True):
         return self.talk.getChats(GetChatsRequest(chatMids,withMembers,withInvitees))
