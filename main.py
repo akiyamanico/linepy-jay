@@ -7,7 +7,8 @@ from commands.response_time import test_response_time
 import os
 from commands.ai import generate_image
 from commands.group_commands import *
-
+from social_tools.whatsappMention import send_whatsapp_message, load_whatsapp_number, save_whatsapp_number
+import random
 
 load_dotenv()
 
@@ -23,50 +24,109 @@ line.server.E2EE_enable = True
 line.log('Auth Token: ' + str(line.authToken))
 print("Login successful with E2EE and Letter Sealing enabled!")
 broadcast_group_id = None
-
+verification_codes = {}
 
 def message_handler(op):
-    global broadcast_group_id
+    global broadcast_group_id, verification_codes
     msg = op.message
     text = msg.text
-
-    if not text:
+    bot_username = "@" + line.profile.displayName 
+    if text is None:
         return
-
+    
     text = text.lower()
     chat_id = msg.to
+    sender_id = msg._from
+    whatsapp_number = load_whatsapp_number()
+    
+    if text == "hi":
+        hello.send_hello(line, chat_id)
+    
+    elif text.startswith("kick @"):
+        kick.kick_member(line, msg, text)
+    
+    elif text == "kickall":
+        kickall.kick_all_members(line, chat_id)
+    
+    elif text == "grouplink on":
+        grouplink_on.enable_grouplink(line, chat_id)
 
-    command_map = {
-        "hi": hello.send_hello,
-        "kick @": kick.kick_member,
-        "kickall": kickall.kick_all_members,
-        "grouplink on": grouplink_on.enable_grouplink,
-        "grouplink off": grouplink_off.disable_grouplink,
-        "start quiz": quiz.start_quiz,
-        "stop quiz": quiz.stop_quiz,
-        "test response": test_response_time,
-        "set this groupbroadcast": set_group_broadcast,
-    }
-
-    for command, func in command_map.items():
-        if text.startswith(command):
-            func(line, chat_id, text)
-            return
-
-    if quiz.current_quiz is not None:
+    elif text == "grouplink off":
+        grouplink_off.disable_grouplink(line, chat_id)
+        
+    elif text == "start quiz":
+        quiz.start_quiz(line, chat_id)
+        
+    elif text == "stop quiz":
+        quiz.stop_quiz(line, chat_id)
+    
+    elif quiz.current_quiz is not None:
         quiz.check_answer(line, text)
-
-    if text.startswith("generate image "):
+    
+    elif text.startswith("generate image "):
         prompt = text.replace("generate image ", "", 1).strip()
         image_url = generate_image(prompt)
-        response_msg = image_url if image_url else "Not enough credit."
-        line.sendMessage(chat_id, response_msg)
+        if image_url:
+            line.sendMessage(chat_id, image_url) 
+        else:
+            line.sendMessage(chat_id, "Not enough credit.")
+            
+    elif text == "test response":
+        test_response_time(line, chat_id)
+
+    elif text == "set this groupbroadcast":
+        set_group_broadcast(line, chat_id)
 
     elif text == "list sider":
         get_siders(line, chat_id)
+        print(get_siders)
+        
+    print(f"[DEBUG] Received message: {text}")
+    print(f"[DEBUG] Sender ID: {sender_id}, Bot ID: {line.profile.mid}")
 
-    handle_instagram_links(line, chat_id, text)
+    if bot_username.lower() in text.lower():
+        if "all" in text.lower():
+            return  
 
+        if msg.contentType == 7:  
+            return
+            
+        chats = line.getChats([chat_id]).chats 
+        if chats: 
+            chat_info = chats[0] 
+            group_name = chat_info.chatName if hasattr(chat_info, 'chatName') else "Unknown Group"
+
+        
+        sender_contact = line.getContact(sender_id)
+        sender_name = sender_contact.displayName if sender_contact else "Unknown Sender"
+
+        if whatsapp_number:
+            send_whatsapp_message(f"You were mentioned in the group: '{group_name}' with messages: '{text}' by: '{sender_name}'", whatsapp_number)
+        else:
+            print("No WhatsApp number set, skipping notification")
+    
+    elif text.startswith("add whatsapp "):
+        new_number = text.replace("add whatsapp ", "").strip()
+        verification_code = random.randint(1000, 9999)
+        verification_codes[sender_id] = (new_number, verification_code)
+
+        message = f"Your verification code is: {verification_code}. Please reply with this code to confirm."
+        send_whatsapp_message(message, new_number)
+        
+        line.sendMessage(chat_id, "A verification code has been sent to your WhatsApp number. Please check and reply with the code.")
+        return
+
+    elif sender_id in verification_codes:
+        expected_number, expected_code = verification_codes[sender_id]
+        if text.strip() == str(expected_code):
+            save_whatsapp_number(expected_number)
+            line.sendMessage(chat_id, "Your WhatsApp number has been verified and saved.")
+            del verification_codes[sender_id]
+        else:
+            line.sendMessage(chat_id, "Invalid verification code. Please try again.")
+        return
+
+    handle_instagram_links(line, chat_id, text)  
 
 def main():
     oepoll = OEPoll(line)
@@ -76,7 +136,7 @@ def main():
         try:    
             ops = oepoll.singleTrace(count=50)
             for op in ops:
-                if op.type == 25:  
+                if op.type == 25:  # New message
                     message_handler(op)
                 oepoll.setRevision(op.revision)
         except EOFError:

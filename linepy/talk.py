@@ -660,7 +660,11 @@ class Talk(object):
             return self.talk.kickoutFromGroup(0, groupId, midlist)
         else:
             return self.talk.deleteOtherFromChat(DeleteOtherFromChatRequest(0,groupId,midlist))
-        
+
+    @loggedIn
+    def getCompactGroup(self, groupId):
+        return self.talk.getCompactGroup(groupId)
+    
     @loggedIn
     def getGroupIdsByName(self, groupName):
         gIds = []
@@ -713,8 +717,26 @@ class Talk(object):
                 "members": [{"mid":x.mid} for x in G.members],
                 "invitee": pending
             })
-            print(group_data)
 
+        else:
+            G = self.talk.getChats(GetChatsRequest([groupId],True,True)).chats[0]
+            gcExtra = G.extra.groupExtra
+            pending = gcExtra.inviteeMids
+            if pending != {}:
+                pending = [{"mid":x} for x in gcExtra.inviteeMids]
+            group_data.update({
+                "class":G,
+                "id":G.chatMid,
+                "createdTime": G.createdTime,
+                "name": G.chatName,
+                "pictureStatus": G.picturePath.replace("/", "", 1),
+                "preventedJoinByTicket": gcExtra.preventedJoinByTicket,
+                "groupPreference": {"invitationTicket": gcExtra.invitationTicket},
+                "creator": {"mid":gcExtra.creator},
+                "members": [{"mid":x} for x in gcExtra.memberMids],
+                "invitee": pending
+            })
+    
     @loggedIn
     def getLastReadMessageIds(self, chatId):
         return self.talk.getLastReadMessageIds(0, chatId)
