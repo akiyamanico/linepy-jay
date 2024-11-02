@@ -5,10 +5,11 @@ import os
 whatsapp_number_file = "whatsapp_number.txt"
 
 verification_codes = {}
+VERIFICATION_MESSAGE = "A verification code has been sent to your WhatsApp number. Please check and reply with the code."
 
 def send_whatsapp_message(message, whatsapp_number):
     url = "http://api.textmebot.com/send.php"
-    api_key = "fZZocj9QdBLD" 
+    api_key = "" 
 
     payload = {
         "recipient": whatsapp_number,
@@ -39,9 +40,11 @@ def add_whatsapp_number(line, chat_id, sender_id, text):
     message = f"Your verification code is: {verification_code}. Please reply with this code to confirm."
     send_whatsapp_message(message, new_number)
 
-    line.sendMessage(chat_id, "A verification code has been sent to your WhatsApp number. Please check and reply with the code.")
+    line.sendMessage(chat_id, VERIFICATION_MESSAGE)
 
 def verify_whatsapp_number(line, chat_id, sender_id, text):
+    if text.strip() == VERIFICATION_MESSAGE:
+        return
     if sender_id in verification_codes:
         expected_number, expected_code = verification_codes[sender_id]
         if text.strip() == str(expected_code):
