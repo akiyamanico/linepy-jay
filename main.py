@@ -108,8 +108,6 @@ def message_handler(op):
             save_whatsapp_number(expected_number)
             line.sendMessage(chat_id, "Your WhatsApp number has been verified and saved.")
             del verification_codes[sender_id]
-        else:
-            line.sendMessage(chat_id, "Invalid verification code. Please try again.")
         return
 
     process_mention(line, msg, text)
