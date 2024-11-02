@@ -32,14 +32,5 @@ def process_mention(line, msg, text):
                                     f"You were mentioned in the group: '{group_name}' with messages: '{text}' by: '{sender_name}'",
                                     whatsapp_number
                                 )
-                                print("[DEBUG] WhatsApp notification sent.")
-                            else:
-                                print("[DEBUG] No WhatsApp number set, skipping notification.")
-                else:
-                    print("[DEBUG] No valid mentionees found in the mentions data.")
             except json.JSONDecodeError:
                 print("[DEBUG] Failed to decode mentions data.")
-        else:
-            print("[DEBUG] No mentions data found.")
-    else:
-        print("[DEBUG] Message does not contain mentions.")
