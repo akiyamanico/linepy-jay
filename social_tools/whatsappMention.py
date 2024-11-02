@@ -8,7 +8,7 @@ verification_codes = {}
 
 def send_whatsapp_message(message, whatsapp_number):
     url = "http://api.textmebot.com/send.php"
-    api_key = "" 
+    api_key = "fZZocj9QdBLD" 
 
     payload = {
         "recipient": whatsapp_number,
