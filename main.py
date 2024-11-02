@@ -38,7 +38,6 @@ def message_handler(op):
     if text is None:
         return
 
-    text = text.lower()
     chat_id = msg.to
     sender_id = msg._from
     
