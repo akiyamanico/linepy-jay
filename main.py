@@ -1,7 +1,7 @@
 # main.py
 from linepy import *
 import time
-from commands import hello, kick, kickall, grouplink_on, grouplink_off, quiz
+from commands import hello, kick, kickall, grouplink_on, grouplink_off, quiz, help
 from dotenv import load_dotenv
 from commands.response_time import test_response_time
 import os
@@ -48,6 +48,9 @@ def message_handler(op):
         
     elif text == "hi":
         hello.send_hello(line, chat_id)
+        
+    elif text == "help":
+        help.send_help(line, chat_id)
 
     elif text.startswith("kick @"):
         kick.kick_member(line, msg, text)

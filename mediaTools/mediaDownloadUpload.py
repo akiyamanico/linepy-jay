@@ -4,7 +4,6 @@ import random
 import string
 
 def generate_random_filename(length=4):
-    """Generate a random filename with the specified length."""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 def download_video(url):
@@ -37,8 +36,7 @@ def download_video(url):
 def upload_video(line, chat_id, video_path):
     try:
         line.sendVideo(chat_id, video_path) 
-        print(f"Uploaded video: {video_path}")
     finally:
         if os.path.exists(video_path):
             os.remove(video_path)  
-            print(f"Deleted file: {video_path}")
+
