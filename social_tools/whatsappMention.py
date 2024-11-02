@@ -2,13 +2,13 @@ import requests
 import random
 import os
 
-whatsapp_number_file = "whatsapp_number.txt" #this is where the whatsapp number is saved
+whatsapp_number_file = "whatsapp_number.txt"
 
 verification_codes = {}
 
 def send_whatsapp_message(message, whatsapp_number):
     url = "http://api.textmebot.com/send.php"
-    api_key = "fZZocj9QdBLD" 
+    api_key = "" 
 
     payload = {
         "recipient": whatsapp_number,

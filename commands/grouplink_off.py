@@ -15,7 +15,5 @@ def disable_grouplink(line, chat_id):
                     line.sendMessage(chat_id, "Group link is now disabled.")
             else:
                 line.sendMessage(chat_id, "This group does not support disabling the group link.")
-        else:
-            print("No group found for the provided chat_id.")
     except Exception as e:
         print(f"Error disabling group link: {e}")  

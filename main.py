@@ -2,7 +2,6 @@
 from linepy import *
 import time
 from commands import hello, kick, kickall, grouplink_on, grouplink_off, quiz
-from social_tools.instagramMediaDownloader import handle_instagram_links
 from dotenv import load_dotenv
 from commands.response_time import test_response_time
 import os
@@ -11,8 +10,7 @@ from commands.group_commands import *
 from tools.mention import process_mention  
 from social_tools.whatsappMention import send_whatsapp_message, save_whatsapp_number
 import random
-import json
-
+from mediaTools.mediaDownloadUpload import download_video, upload_video
 load_dotenv()
 
 print("Attempting to log in...")
@@ -34,7 +32,6 @@ def message_handler(op):
     msg = op.message
 
     if msg is None or not hasattr(msg, 'text'):
-        print("[DEBUG] Message is None or does not have 'text' attribute.")
         return
 
     text = msg.text
@@ -44,8 +41,13 @@ def message_handler(op):
     text = text.lower()
     chat_id = msg.to
     sender_id = msg._from
-
-    if text == "hi":
+    
+    if "instagram.com" in text or "tiktok.com" in text or "youtube.com" in text:
+        print(f"Detected video link: {text}")
+        video_path = download_video(text)
+        upload_video(line, chat_id, video_path)
+        
+    elif text == "hi":
         hello.send_hello(line, chat_id)
 
     elif text.startswith("kick @"):
@@ -109,7 +111,6 @@ def message_handler(op):
         return
 
     process_mention(line, msg, text)
-    handle_instagram_links(line, chat_id, text)
 
 def main():
     oepoll = OEPoll(line)

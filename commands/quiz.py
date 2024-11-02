@@ -1,6 +1,14 @@
 import random
 import threading
 
+
+#TODO
+#Question bisa ditambahkan oleh user atau member grup, kemudian disimpan kedalam JSON
+#Kemudian tambahkan username siapa yang bikin pertanyaan tersebut
+#1 user maximal 5 pertanyaan bisa ditambahkan
+#max data pertanyaan adalah 100
+#hanya developer / admin yang bisa hapus atau reset pertanyaan
+
 questions = [
     {"question": "kenapa saya jelek?", "answer": "ya jelek"},
     {"question": "kenapa saya goblok", "answer": "ya goblok"},

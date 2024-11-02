@@ -5,7 +5,6 @@ def kick_all_members(line, chat_id):
 
         if group:
             member_mids = [member.mid for member in group.members]  
-            print(f"Kicking out the following members: {member_mids}")
 
             if hasattr(line, 'kickoutFromGroup'):
                 for member_mid in member_mids:

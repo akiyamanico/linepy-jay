@@ -7,17 +7,14 @@ def process_mention(line, msg, text):
     sender_id = msg._from
     whatsapp_number = load_whatsapp_number()
 
-    print(f"[DEBUG] Received message: {text}")
-    print(f"[DEBUG] Sender ID: {sender_id}, Chat ID: {chat_id}")
 
     if msg.contentType == 0 and "@" in text:
         mentions_data = msg.contentMetadata.get('MENTION')
 
-        print(f"[DEBUG] Mentions data: {mentions_data}")
 
         if mentions_data:
             try:
-                mentions_info = json.loads(mentions_data)  # Parse JSON
+                mentions_info = json.loads(mentions_data) 
 
                 mentionees = mentions_info.get("MENTIONEES", [])
                 if mentionees:
@@ -34,14 +31,5 @@ def process_mention(line, msg, text):
                                     f"You were mentioned in the group: '{group_name}' with messages: '{text}' by: '{sender_name}'",
                                     whatsapp_number
                                 )
-                                print("[DEBUG] WhatsApp notification sent.")
-                            else:
-                                print("[DEBUG] No WhatsApp number set, skipping notification.")
-                else:
-                    print("[DEBUG] No valid mentionees found in the mentions data.")
             except json.JSONDecodeError:
                 print("[DEBUG] Failed to decode mentions data.")
-        else:
-            print("[DEBUG] No mentions data found.")
-    else:
-        print("[DEBUG] Message does not contain mentions.")
