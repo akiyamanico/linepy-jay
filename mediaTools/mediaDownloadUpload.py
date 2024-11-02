@@ -25,6 +25,7 @@ def download_video(url):
             '-b:v', '10M', 
             '-c:v', 'libx264', 
         ],
+       # 'cookiefile': 'cookies.txt' #needed if the vps ip was blocked by youtube
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:

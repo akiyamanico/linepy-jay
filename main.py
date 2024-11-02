@@ -41,7 +41,7 @@ def message_handler(op):
     chat_id = msg.to
     sender_id = msg._from
     
-    if "instagram.com" in text or "tiktok.com" in text or "youtube.com" in text:
+    if "instagram.com" in text or "youtube.com" in text or "youtu.be" in text:
         print(f"Detected video link: {text}")
         video_path = download_video(text)
         upload_video(line, chat_id, video_path)
