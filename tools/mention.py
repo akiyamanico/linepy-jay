@@ -6,13 +6,9 @@ def process_mention(line, msg, text):
     sender_id = msg._from
     whatsapp_number = load_whatsapp_number()
 
-    print(f"[DEBUG] Received message: {text}")
-    print(f"[DEBUG] Sender ID: {sender_id}, Chat ID: {chat_id}")
 
     if msg.contentType == 0 and "@" in text:
         mentions_data = msg.contentMetadata.get('MENTION')
-
-        print(f"[DEBUG] Mentions data: {mentions_data}")
 
         if mentions_data:
             try:
